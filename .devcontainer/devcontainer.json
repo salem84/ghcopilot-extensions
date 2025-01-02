@@ -1,6 +1,7 @@
 {
 	"image": "mcr.microsoft.com/devcontainers/dotnet:9.0",
 	"features": {
+		"ghcr.io/devcontainers/features/node:1": {},
 		"ghcr.io/azure/azure-dev/azd:latest": {}
 	},
 	"customizations": {
@@ -8,14 +9,10 @@
 			"extensions": [
 				"github.vscode-github-actions",
 				"ms-azuretools.azure-dev",
-				"ms-azuretools.vscode-azurefunctions",
 				"ms-azuretools.vscode-azurestaticwebapps",
-				"ms-azuretools.vscode-bicep",
-				"ms-azuretools.vscode-docker",
-				"ms-dotnettools.csdevkit",
-				"ms-mssql.mssql"
+				"ms-dotnettools.csdevkit"
 			]
 		}
 	},
-	"postCreateCommand": "npm install --global @azure/static-web-apps-cli"
+	"postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
   }
