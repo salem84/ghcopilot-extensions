@@ -22,29 +22,28 @@ public class CodiceFiscaleEndpoint : IEndpointRouteHandlerBuilder
     {
         var codiceFiscaleApiGroup = endpoints.MapGroup("/api/codicefiscale/genera");
 
-        codiceFiscaleApiGroup.MapGet(string.Empty, GeneraCodiceFiscaleAsync);
+        codiceFiscaleApiGroup.MapPost(string.Empty, GeneraCodiceFiscaleAsync);
     }
 
-    private static async Task<IResult> GeneraCodiceFiscaleAsync(HttpContext context, ILogger<CodiceFiscaleEndpoint> logger, char? genere = null, int? minAge = null, int? maxAge = null, string cityCode = null)
+    private static async Task<IResult> GeneraCodiceFiscaleAsync(HttpContext context, ILogger<CodiceFiscaleEndpoint> logger, GeneraCodiceFiscaleRequest request)
     {
         logger.LogInformation("Elaborazione di una richiesta per generare dati falsi del codice fiscale.");
 
         var faker = new Faker("it");
 
+        var genere = request.Genere;
         // Genera un genere casuale se non fornito
         if (genere == null || char.ToUpper(genere.Value) != 'M' && char.ToUpper(genere.Value) != 'F')
         {
             genere = faker.PickRandom(new[] { 'M', 'F' });
         }
 
-        minAge ??= 18;
-        maxAge ??= 50;
-
-        if (minAge < 0 || maxAge < minAge)
+        if (request.MinAge < 0 || request.MaxAge < request.MinAge)
         {
             return TypedResults.BadRequest("Intervallo di età non valido. Assicurati che 'minAge' sia non negativo e 'maxAge' sia maggiore o uguale a 'minAge'.");
         }
 
+        var cityCode = request.CityCode;
         if (string.IsNullOrEmpty(cityCode))
         {
             // Scegli un codice città casuale se non fornito
@@ -54,7 +53,7 @@ public class CodiceFiscaleEndpoint : IEndpointRouteHandlerBuilder
         }
 
         // Genera la data di nascita entro l'intervallo di età fornito
-        var birthDate = faker.Date.Between(DateTime.Today.AddYears(-maxAge.Value), DateTime.Today.AddYears(-minAge.Value)).Date;
+        var birthDate = faker.Date.Between(DateTime.Today.AddYears(-request.MaxAge), DateTime.Today.AddYears(-request.MinAge)).Date;
 
         // Genera nomi e cognomi in base al genere
         var firstName = genere == 'M' ? faker.Name.FirstName(Bogus.DataSets.Name.Gender.Male) : faker.Name.FirstName(Bogus.DataSets.Name.Gender.Female);
@@ -65,7 +64,7 @@ public class CodiceFiscaleEndpoint : IEndpointRouteHandlerBuilder
         var codiceFiscale = codiceFiscaleGenerator.Generate(firstName, lastName, birthDate, genere.Value, cityCode);
 
         // Recupera il nome della città in base al codice città
-        var cityName = CodiciCatastaliCittà.ContainsKey(cityCode) ? CodiciCatastaliCittà[cityCode] : "Città sconosciuta";
+        var cityName = CodiciCatastaliCittà.ContainsKey(cityCode) ? CodiciCatastaliCittà[cityCode] : string.Empty;
 
         // Costruisci la risposta
         var response = new
@@ -80,4 +79,6 @@ public class CodiceFiscaleEndpoint : IEndpointRouteHandlerBuilder
 
         return TypedResults.Ok(response);
     }
+
+    public record GeneraCodiceFiscaleRequest(char? Genere = null, int MinAge = 18, int MaxAge = 50, string CityCode = "H501B");
 }

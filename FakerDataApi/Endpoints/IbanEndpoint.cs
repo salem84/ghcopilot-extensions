@@ -15,10 +15,10 @@ public class IbanEndpoint : IEndpointRouteHandlerBuilder
     {
         var ibanApiGroup = endpoints.MapGroup("/api/iban/genera");
 
-        ibanApiGroup.MapGet(string.Empty, GeneraIbanAsync);
+        ibanApiGroup.MapPost(string.Empty, GeneraIbanAsync);
     }
 
-    private static async Task<Ok<string>> GeneraIbanAsync(HttpContext context, string countryCode = "IT")
+    private static async Task<Ok<GeneraIbanResponse>> GeneraIbanAsync(HttpContext context, GeneraIbanRequest request)
     {
         //IIbanRegistry registry = IbanRegistry.Default;
         //var bankIdentifier = faker.Finance.Bic();
@@ -32,10 +32,13 @@ public class IbanEndpoint : IEndpointRouteHandlerBuilder
         //    .WithBankAccountNumber(bankAccountNumber)
         //    .Build();
 
-        var faker = new Faker("it");
+        var faker = new Faker();
 
-        var iban = faker.Finance.Iban(formatted: false, countryCode: countryCode);
+        var iban = faker.Finance.Iban(formatted: false, countryCode: request.CountryCode);
 
-        return TypedResults.Ok(iban);
+        return TypedResults.Ok(new GeneraIbanResponse(iban));
     }
+
+    public record GeneraIbanRequest(string CountryCode = "IT");
+    public record GeneraIbanResponse(string Iban);
 }
