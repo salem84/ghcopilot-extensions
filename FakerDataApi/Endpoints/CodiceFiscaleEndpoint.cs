@@ -80,5 +80,5 @@ public class CodiceFiscaleEndpoint : IEndpointRouteHandlerBuilder
         return TypedResults.Ok(response);
     }
 
-    public record GeneraCodiceFiscaleRequest(char? Genere = null, int MinAge = 18, int MaxAge = 50, string CityCode = "H501B");
+    public record GeneraCodiceFiscaleRequest(char? Genere = null, int MinAge = 18, int MaxAge = 70, string? CityCode = null);
 }
