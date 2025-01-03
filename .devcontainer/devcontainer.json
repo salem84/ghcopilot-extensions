@@ -10,7 +10,9 @@
 				"github.vscode-github-actions",
 				"ms-azuretools.azure-dev",
 				"ms-azuretools.vscode-azurestaticwebapps",
-				"ms-dotnettools.csdevkit"
+				"ms-dotnettools.csdevkit",
+				"GitHub.copilot",
+				"GitHub.copilot-chat"
 			]
 		}
 	},
