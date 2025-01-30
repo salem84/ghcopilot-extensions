@@ -1,0 +1,18 @@
+# Authentication flow for GH Debug CLI
+# More information at https://github.com/copilot-extensions/gh-debug-cli 
+# and https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app#using-the-device-flow-to-generate-a-user-access-token
+
+### Step 1: Get device code / user code
+# @name device_code_auth
+POST https://github.com/login/device/code?client_id={{gh_app_client_id}}
+Accept: application/json
+
+### Step 2: Authenticate with user_code
+# Authenticate with user_code at the following URL 
+# https://github.com/login/device
+
+### Step 3: Get access token
+# @name get_access_token
+@device_code = {{device_code_auth.response.body.device_code}}
+POST https://github.com/login/oauth/access_token?client_id={{gh_app_client_id}}&device_code={{device_code}}&grant_type=urn:ietf:params:oauth:grant-type:device_code
+Accept: application/json

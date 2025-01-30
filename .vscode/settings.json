@@ -1,0 +1,11 @@
+{
+    "rest-client.environmentVariables": {
+        "$shared": {},
+        "env_salem84": {
+            "gh_app_client_id": "Iv23liftOnmQedzCQQgv",
+        },
+        "env_giolasal": {
+            "gh_app_client_id": "b82a...yeah-not-the-real-key...3a62",
+        },
+    }
+}
