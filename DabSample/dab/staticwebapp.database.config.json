@@ -20,8 +20,10 @@
     },
     "host": {
       "cors": {
-        "origins": [],
-        "allow-credentials": false
+        "origins": [
+          "https://studio.apollographql.com"
+        ],
+        "allow-credentials": true
       },
       "authentication": {
         "provider": "StaticWebApps"
