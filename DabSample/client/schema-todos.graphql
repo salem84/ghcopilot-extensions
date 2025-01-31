@@ -1,0 +1,158 @@
+type Query {
+  """
+  Get a list of all the Todo items from the database
+  """
+  todos(
+    """
+    The number of items to return from the page start point
+    """
+    first: Int
+
+    """
+    A pagination token from a previous query to continue through a paginated list
+    """
+    after: String
+
+    """
+    Filter options for query
+    """
+    filter: TodoFilterInput
+
+    """
+    Ordering options for query
+    """
+    orderBy: TodoOrderByInput
+  ): TodoConnection
+
+"""
+The return object from a filter query that supports a pagination token for paging through results
+"""
+type TodoConnection {
+  """
+  The list of items that matched the filter
+  """
+  items: [Todo!]!
+
+  """
+  A pagination token to provide to subsequent pages of a query
+  """
+  endCursor: String
+
+  """
+  Indicates if there are more pages of items to return
+  """
+  hasNextPage: Boolean!
+}
+
+"""
+Filter input for Todo GraphQL type
+"""
+input TodoFilterInput {
+  """
+  Filter options for id
+  """
+  id: UuidFilterInput
+
+  """
+  Filter options for title
+  """
+  title: StringFilterInput
+
+  """
+  Filter options for completed
+  """
+  completed: BooleanFilterInput
+
+  """
+  Filter options for owner_id
+  """
+  owner_id: StringFilterInput
+
+  """
+  Filter options for position
+  """
+  position: IntFilterInput
+
+  """
+  Conditions to be treated as AND operations
+  """
+  and: [TodoFilterInput]
+
+  """
+  Conditions to be treated as OR operations
+  """
+  or: [TodoFilterInput]
+}
+
+"""
+Input type for adding String filters
+"""
+input StringFilterInput {
+  """
+  Equals
+  """
+  eq: String
+
+  """
+  Contains
+  """
+  contains: String
+
+  """
+  Not Contains
+  """
+  notContains: String
+
+  """
+  Starts With
+  """
+  startsWith: String
+
+  """
+  Ends With
+  """
+  endsWith: String
+
+  """
+  Not Equals
+  """
+  neq: String
+
+  """
+  Case Insensitive
+  """
+  caseInsensitive: Boolean = false
+
+  """
+  Is null test
+  """
+  isNull: Boolean
+}
+
+"""
+Input type for adding Boolean filters
+"""
+input BooleanFilterInput {
+  """
+  Equals
+  """
+  eq: Boolean
+
+  """
+  Not Equals
+  """
+  neq: Boolean
+
+  """
+  Not null test
+  """
+  isNull: Boolean
+}
+
+type Todo {
+  id: UUID!
+  title: String!
+  completed: Boolean!
+  owner_id: String!
+  position: Int
+}
