@@ -7,6 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakerDataApi", "FakerDataAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackbeardDotNet", "BlackbeardDotNet\BlackbeardDotNet.csproj", "{95D724A1-1BE8-424F-BD09-25D4ED0649C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DabAgent", "DabAgent\DabAgent.csproj", "{4ABE0C4E-28CA-4AD7-BB07-2421116F0EAE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "http", "http", "{7B329C1D-E037-4C8E-864E-3CFEC135653E}"
+	ProjectSection(SolutionItems) = preProject
+		http\gh_auth.http = http\gh_auth.http
+		http\graphql.http = http\graphql.http
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +29,10 @@ Global
 		{95D724A1-1BE8-424F-BD09-25D4ED0649C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95D724A1-1BE8-424F-BD09-25D4ED0649C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95D724A1-1BE8-424F-BD09-25D4ED0649C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ABE0C4E-28CA-4AD7-BB07-2421116F0EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ABE0C4E-28CA-4AD7-BB07-2421116F0EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ABE0C4E-28CA-4AD7-BB07-2421116F0EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ABE0C4E-28CA-4AD7-BB07-2421116F0EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
