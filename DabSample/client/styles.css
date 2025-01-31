@@ -6,16 +6,58 @@ html, body {
   margin: 0;
   border: 0;
   padding: 0;
-  background-color: #fff;
+  background-color: #f4f4f9;
 }
 
 main {
   margin: auto;
-  width: 50%;
+  width: 80%;
   padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 main > h1 {
   text-align: center;
-  font-size: 3.5em;
+  font-size: 2.5em;
+  color: #333;
+}
+
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.intro p {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.intro img {
+  max-width: 350px;
+  border-radius: 10px;
+}
+
+pre {
+  background-color: #2d2d2d;
+  color: #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.token.comment { color: #6a9955; }
+.token.punctuation { color: #ccc; }
+.token.keyword { color: #569cd6; }
+.token.string { color: #ce9178; }
+.token.function { color: #dcdcaa; }
+
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
 }
