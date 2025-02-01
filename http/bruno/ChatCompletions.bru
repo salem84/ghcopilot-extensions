@@ -1,0 +1,29 @@
+meta {
+  name: ChatCompletions
+  type: http
+  seq: 4
+}
+
+post {
+  url: https://api.githubcopilot.com/chat/completions
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer ghu_gQt9JTbTqAqmbDgdyG6D5g2iUXJfUT44oGID
+}
+
+body:json {
+  {
+    "stream": false,
+    "model": "gpt-4o",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Get first todo item completed"
+      }
+    ]
+  }
+}
