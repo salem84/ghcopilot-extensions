@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Octokit;
-using System.Diagnostics;
-using System.Net;
 using System.Net.Http.Headers;
 
 var appName = "GHCopilotLocalDev";
-var schemaGraphQLUrl = "";
-var dabApiUrl = "";
+var baseUrl = "https://mango-island-0e735f103.4.azurestaticapps.net";
+var schemaGraphQLUrl = $"{baseUrl}/schema-todos.graphql";
+var dabGraphQLApiUrl = $"{baseUrl}/data-api/graphql";
 //var appName = "AIDay2025";
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient();
 var app = builder.Build();
 
 app.MapGet("/info", () => "Hello GraphQL Copilot!");
@@ -20,25 +19,31 @@ app.MapPost(
     [FromServices] HttpClient httpClient) =>
     {
         var schemaGraphQL = await httpClient.GetStringAsync(schemaGraphQLUrl);
+        var latestMessage = payload.Messages.Last(x => x.Role == "user");
+        latestMessage.Content = $"The user query is: \"{latestMessage.Content}\"";
+
+        payload.Messages.Clear();
 
         // Insert prompt system messages in the message list.
-        payload.Messages.Insert(0, new Message
+        payload.Messages.Add(new Message
         {
             Role = "system",
-            Content = $"Start every response with the user's name, which is "
+            Content = $"You are a GraphQL developer.\r\nYou must write a GraphQL query for a database with the following schema: {schemaGraphQL}"
         });
 
         // Insert GraphQL Schema prompt
-        payload.Messages.Insert(0, new Message
+        payload.Messages.Add(new Message
         {
             Role = "system",
-            Content = "****"
+            Content = $"Response must be contain only GraphQL response in query format without any other information such as markdown. \r\nIf you cannot generate a GraphQL a \"Bad Request\" error must be returned."
         });
+
+        payload.Messages.Add(latestMessage);
 
         // Use Copilot's LLM to generate a response to the user's messages.
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
         payload.Stream = true;
-
+        payload.Model = "gpt-4o";
         var copilotLLMResponse = await httpClient.PostAsJsonAsync("https://api.githubcopilot.com/chat/completions", payload);
 
         // Stream the response straight back to the user.
@@ -57,5 +62,6 @@ internal class Message
 internal class Payload
 {
     public bool Stream { get; set; }
+    public string Model { get; set; } = string.Empty;
     public List<Message> Messages { get; set; } = [];
 }

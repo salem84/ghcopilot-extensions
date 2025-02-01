@@ -1,0 +1,28 @@
+meta {
+  name: DabAgent
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:5197
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  X-GitHub-Token: ghu_fmH9u6mjHSL86M0fao0R0jactguUzW3
+}
+
+body:json {
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Get first todo item completed",
+        "copilot_references": []
+      }
+    ]
+  }
+}
