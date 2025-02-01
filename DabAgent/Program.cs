@@ -1,10 +1,6 @@
 using DabAgent.Services;
 using Microsoft.AspNetCore.Mvc;
 
-var appName = "GHCopilotLocalDev";
-
-//var appName = "AIDay2025";
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<GraphQLService>();
@@ -34,14 +30,15 @@ app.MapPost(
         {
             Role = "system",
             Content = $@"You are a GraphQL developer.
-                You must write a GraphQL query for a database with the following schema: {{schemaGraphQL}}"
+                You must write a GraphQL query for a database with the following schema: {schemaGraphQL}"
         });
 
         // Insert GraphQL Schema prompt
         payload.Messages.Add(new ChatMessage
         {
             Role = "system",
-            Content = $@"Response must be contain only GraphQL response in query format without any other information such as markdown.
+            Content = $@"Response must be contain only GraphQL response in query format without any other information such as markdown or other escapes.
+                Query must start with a curly brace character.
                 If you cannot generate a GraphQL a 'Bad Request' error must be returned."
         });
 
@@ -52,16 +49,29 @@ app.MapPost(
             Content = $"The user query is: '{lastMessageContent}'"
         });
 
-        // Stream the response straight back to the user.
-        //var copilotStreamResponse = await copilotApiService.GetStreamCompletionsAsync(githubToken, payload);
-        //return Results.Stream(copilotStreamResponse, "application/json");
-
+        logger.LogInformation("Invoking Copilot...");
         var copilotResponse = await copilotApiService.GetStringCompletionsAsync(githubToken, payload);
         logger.LogInformation("Copilot response: {copilotResponse}", copilotResponse);
 
+        logger.LogInformation("Invoking GraphQL Endpoint...");
         var graphQLResponse = await graphQLService.SendGraphQLQuery(copilotResponse);
+        logger.LogInformation("Dab GraphQL Endpoint response: {graphQLResponse}", graphQLResponse);
+
+        payload.Messages.Clear();
+        payload.Messages.Add(new ChatMessage
+        {
+            Role = "user",
+            Content = $@"You have to inform a user using natural language. The user ask this: '{lastMessageContent}'.
+                  Rewrite the GraphQL response '{graphQLResponse}' in a simple way and include also the query."
+        });
 
         //await context.Response.WriteTextStreamEvent(graphQLResponse);
         //await context.Response.WriteEndStreamEvent();
         //return;
+
+        logger.LogInformation("Invoking Copilot...");
+        var copilotFinalResponse = await copilotApiService.GetStreamCompletionsAsync(githubToken, payload);
+        return Results.Stream(copilotFinalResponse, "application/json");
     });
+
+app.Run();

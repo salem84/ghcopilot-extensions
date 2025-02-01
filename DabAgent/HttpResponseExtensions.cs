@@ -20,7 +20,6 @@ namespace DabAgent
             };
             response.ContentType = "text/event-stream";
             await response.WriteAsync($"data: {JsonSerializer.Serialize(textObject)}\n\n");
-            response.Body.Flush();
         }
 
         public static async Task WriteEndStreamEvent(this HttpResponse response)
@@ -32,9 +31,7 @@ namespace DabAgent
                     new { index = 0, finish_reason = "stop", delta = new { content = (string)null } }
                 }
             };
-            response.ContentType = "text/event-stream";
             await response.WriteAsync($"data: {JsonSerializer.Serialize(endObject)}\n\ndata: [DONE]\n\n");
-            response.Body.Flush();
         }
     }
 }

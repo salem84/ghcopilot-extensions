@@ -16,8 +16,14 @@
         {
             var swaHttpClient = httpClientFactory.CreateClient();
             swaHttpClient.BaseAddress = new Uri(_swaBaseUrl);
-            var content = new StringContent(query);
-            var response = await swaHttpClient.PostAsync("/data-api/graphql", content);
+
+            var queryObject = new
+            {
+                query = query
+            };
+
+            //var content = new StringContent(JsonSeria(queryObject), Encoding.UTF8, "application/json")
+            var response = await swaHttpClient.PostAsJsonAsync("/data-api/graphql", queryObject);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
