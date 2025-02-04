@@ -28,7 +28,7 @@
       "authentication": {
         "provider": "StaticWebApps"
       },
-      "mode": "development"
+      "mode": "production"
     }
   },
   "entities": {
@@ -58,6 +58,27 @@
         }
       ]
     },
+    "Categories": {
+      "source": "dbo.categories",
+      "rest": {
+        "path": "/categories"
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "*"
+          ]
+        }
+      ],
+      "relationships": {
+        "books": {
+          "cardinality": "many",
+          "target.entity": "Book"
+        }
+      }
+    },
+
     "Book": {
       "source": {
         "object": "dbo.books",
@@ -82,7 +103,18 @@
             }
           ]
         }
-      ]
+      ],
+      "relationships": {
+        "categories": {
+          "cardinality": "one",
+          "target.entity": "Categories"
+        },
+        "authors": {
+          "cardinality": "many",
+          "target.entity": "Author",
+          "linking.object": "dbo.books_authors"
+        }  
+      }
     },
     "Author": {
       "source": {
@@ -106,6 +138,48 @@
             {
               "action": "*"
             }
+          ]
+        }
+      ],
+      "relationships": {
+        "books": {
+          "cardinality": "many",
+          "target.entity": "Book",
+          "linking.object": "dbo.books_authors"
+        }
+      }
+    },
+    "AuthorBooksCount": {
+      "source": {
+        "object": "dbo.vw_book_count_by_author",
+        "type": "view",
+        "key-fields": [
+          "author_id"
+        ]
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "GetAllCowrittenBooksByAuthor": {
+      "source": {
+        "object": "dbo.stp_get_all_cowritten_books_by_author",
+        "type": "stored-procedure",
+        "parameters": {
+          "author": "",
+          "searchType": "c"
+        }    
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "execute"
           ]
         }
       ]
