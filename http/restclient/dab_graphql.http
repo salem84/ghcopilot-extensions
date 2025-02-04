@@ -1,0 +1,20 @@
+@swaBaseUrl = https://mango-island-0e735f103.4.azurestaticapps.net
+
+POST {{swaBaseUrl}}/data-api/graphql HTTP/1.1
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+{
+    todos(first: 1) {
+      items {
+        id
+        title
+        completed
+        owner_id
+        position
+      }
+      endCursor
+      hasNextPage
+    }
+  }
+

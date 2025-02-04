@@ -1,0 +1,16 @@
+@ghBaseUrl = https://api.githubcopilot.com
+
+POST {{ghBaseUrl}}/chat/completions
+Content-Type: application/json
+Authorization: Bearer {{gh_token}}
+
+{
+    "stream": false,
+    "model": "gpt-4o",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Get first todo item completed"
+      }
+    ]
+  }

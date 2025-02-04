@@ -1,0 +1,15 @@
+@url = http://localhost:5197
+
+POST {{url}}
+Content-Type: application/json
+X-GitHub-Token: {{gh_token}}
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "Get first todo item completed",
+            "copilot_references": []
+        }
+    ]
+}
