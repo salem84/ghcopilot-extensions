@@ -18,11 +18,19 @@
       <p>Benvenuti su Dab Agent, il tuo assistente personale per la gestione dei task. Utilizza questa applicazione per visualizzare e gestire i tuoi schemi GraphQL in modo semplice e intuitivo.</p>
       <img src="github_graphql.png" alt="Dab Agent Image">
     </div>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="toggleSchema()">Mostra/Nascondi GraphQL Schema</button>
+    <div class="flex space-x-4 mb-4">
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="toggleSchema('schema-todos.graphql')">Schema Todos</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="toggleSchema('schema-books.graphql')">Schema Books</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="toggleSchema('schema-people.graphql')">Schema People</button>
+    </div>
+    <div>
+      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onclick="window.location.href='/dashboard.html'">Go to Dashboard</button>
+    </div>
+      
     <pre id="graphql-schema" style="display: none;"><code class="language-graphql"></code></pre>
   </main>
   <script>
-    function toggleSchema() {
+    function toggleSchema(schemaName) {
       const schemaElement = document.getElementById('graphql-schema');
       if (schemaElement.style.display === 'none') {
         schemaElement.style.display = 'block';
@@ -31,7 +39,7 @@
       }
     }
 
-    fetch('schema-todos.graphql')
+    fetch(schemaName)
       .then(response => response.text())
       .then(schema => {
         document.querySelector('#graphql-schema code').textContent = schema;
