@@ -7,8 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <title>Dab Agent 🤖</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -19,9 +18,9 @@
       <img src="github_graphql.png" alt="Dab Agent Image">
     </div>
     <div class="flex space-x-4 mb-4">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="toggleSchema('schema-todos.graphql')">Schema Todos</button>
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="toggleSchema('schema-books.graphql')">Schema Books</button>
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="toggleSchema('schema-people.graphql')">Schema People</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="loadSchema('schema-todos.graphql')">Schema Todos</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="loadSchema('schema-books.graphql')">Schema Books</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="loadSchema('schema-people.graphql')">Schema People</button>
     </div>
     <div>
       <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onclick="window.location.href='/dashboard.html'">Go to Dashboard</button>
@@ -29,23 +28,19 @@
       
     <pre id="graphql-schema" style="display: none;"><code class="language-graphql"></code></pre>
   </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
   <script>
-    function toggleSchema(schemaName) {
+    function loadSchema(schemaName) {
       const schemaElement = document.getElementById('graphql-schema');
-      if (schemaElement.style.display === 'none') {
-        schemaElement.style.display = 'block';
-      } else {
-        schemaElement.style.display = 'none';
-      }
+      fetch(schemaName)
+        .then(response => response.text())
+        .then(schema => {
+          document.querySelector('#graphql-schema code').textContent = schema;
+          Prism.highlightAll();
+          schemaElement.style.display = 'block';
+        })
+        .catch(error => console.error('Error loading schema:', error));
     }
-
-    fetch(schemaName)
-      .then(response => response.text())
-      .then(schema => {
-        document.querySelector('#graphql-schema code').textContent = schema;
-        Prism.highlightAll();
-      })
-      .catch(error => console.error('Error loading schema:', error));
   </script>
 </body>
 
