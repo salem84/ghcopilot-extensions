@@ -58,6 +58,70 @@
         }
       ]
     },
+    "People": {
+      "source": {
+        "object": "dbo.people",
+        "type": "table"
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Person",
+          "plural": "People"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ],
+      "relationships": {
+        "cities": {
+          "cardinality": "one",
+          "target.entity": "Cities"
+        } 
+      }
+    },
+    "Cities": {
+      "source": {
+        "object": "dbo.cities",
+        "type": "table"
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "City",
+          "plural": "Cities"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ],
+      "relationships": {
+        "people": {
+          "cardinality": "many",
+          "target.entity": "People"
+        }
+      }
+    },
     "Categories": {
       "source": "dbo.categories",
       "rest": {
