@@ -22,6 +22,23 @@ namespace DabAgent
             await response.WriteAsync($"data: {JsonSerializer.Serialize(textObject)}\n\n");
         }
 
+        public static async Task WriteConfirmationStreamEvent(this HttpResponse response, string id, string title, string message)
+        {
+            var confirmationObject = new
+            {
+                type = "action",
+                title,
+                message,
+                confirmation = new
+                {
+                    id
+                }
+            };
+            response.ContentType = "text/event-stream";
+            await response.WriteAsync("event: copilot_confirmation\n");
+            await response.WriteAsync($"data: {JsonSerializer.Serialize(confirmationObject)}\n\n");
+        }
+
         public static async Task WriteEndStreamEvent(this HttpResponse response)
         {
             var endObject = new
