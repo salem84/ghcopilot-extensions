@@ -1,5 +1,10 @@
+using DabAgent.Models;
 using DabAgent.Services;
 using Microsoft.AspNetCore.Mvc;
+
+const string GRAPHQL_SCHEMA_TODOS_RELATIVE_URL = "/schema-todos.graphql";
+const string GRAPHQL_SCHEMA_BOOKS_RELATIVE_URL = "/schema-books.graphql";
+const string GRAPHQL_SCHEMA_PEOPLE_RELATIVE_URL = "/schema-people.graphql";
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
@@ -18,7 +23,7 @@ app.MapPost(
     [FromServices] GraphQLService graphQLService,
     [FromServices] GitHubCopilotApiService copilotApiService) =>
     {
-        var schemaGraphQL = await graphQLService.GetGraphQLSchema();
+        var schemaGraphQL = await graphQLService.GetGraphQLSchema(GRAPHQL_SCHEMA_PEOPLE_RELATIVE_URL);
 
         // Get the latest user message and modify it later to include a custom prompt        
         var lastMessageContent = payload.Messages.Last(x => x.Role == "user").Content;
