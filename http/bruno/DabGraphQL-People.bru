@@ -1,0 +1,31 @@
+meta {
+  name: DabGraphQL-People
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: https://mango-island-0e735f103.4.azurestaticapps.net/data-api/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  {
+    people {
+      items {
+        id
+        first_name
+        last_name
+        gender
+        birth_date
+        tax_code
+        city_id
+        cities {
+          id
+          name
+        }
+      }
+    }
+  }
+}
