@@ -1,29 +1,10 @@
-using DabAgent.Models;
-using DabAgent.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿- Step 1: StreamEvent
 
-const string GRAPHQL_SCHEMA_TODOS_RELATIVE_URL = "/schema-todos.graphql";
-const string GRAPHQL_SCHEMA_BOOKS_RELATIVE_URL = "/schema-books.graphql";
-const string GRAPHQL_SCHEMA_PEOPLE_RELATIVE_URL = "/schema-people.graphql";
+        await context.Response.WriteTextStreamEvent("Hello World!");
+        await context.Response.WriteEndStreamEvent();
+        return;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<GraphQLService>();
-builder.Services.AddScoped<GitHubCopilotApiService>();
-var app = builder.Build();
-
-app.MapGet("/info", () => "Hello GraphQL Copilot!");
-app.MapGet("/callback", () => "You may close this window and return to GitHub where you should refresh the page and start a fresh chat.");
-
-app.MapPost(
-    "/", async ([FromHeader(Name = "X-GitHub-Token")] string githubToken,
-    [FromBody] AgentPayload payload,
-    HttpContext context,
-    [FromServices] ILogger<Program> logger,
-    [FromServices] GraphQLService graphQLService,
-    [FromServices] GitHubCopilotApiService copilotApiService) =>
-    {
-        var schemaGraphQL = await graphQLService.GetGraphQLSchema(GRAPHQL_SCHEMA_PEOPLE_RELATIVE_URL);
+- Step 2: System Prompt & Invoke Copilot
 
         // Get the latest user message and modify it later to include a custom prompt        
         var lastMessageContent = payload.Messages.Last(x => x.Role == "user").Content;
@@ -35,13 +16,6 @@ app.MapPost(
         {
             Role = "system",
             Content = "You are a GraphQL developer."
-        });
-
-        // Insert GraphQL Schema prompt
-        payload.Messages.Add(new ChatMessage
-        {
-            Role = "system",
-            Content = $"You must write a GraphQL query for a database with the following schema: {schemaGraphQL}"
         });
 
         // Insert prompt instructions
@@ -64,9 +38,30 @@ app.MapPost(
         var copilotResponse = await copilotApiService.GetStringCompletionsAsync(githubToken, payload);
         logger.LogInformation("Copilot response: {copilotResponse}", copilotResponse);
 
+
+- Step 3/1: Download Schema
+        var schemaGraphQL = await graphQLService.GetGraphQLSchema(GRAPHQL_SCHEMA_PEOPLE_RELATIVE_URL);
+
+- Step 3/2: Insert GraphQL Schema prompt
+        
+        // Insert GraphQL Schema prompt
+        payload.Messages.Add(new ChatMessage
+        {
+            Role = "system",
+            Content = $"You must write a GraphQL query for a database with the following schema: {schemaGraphQL}"
+        });
+
+- Step 4: Add model
+
+        payload.Model = "gpt-4o";
+
+- Step 5: Send GraphQL query
+
         logger.LogInformation("Invoking GraphQL Endpoint...");
         var graphQLResponse = await graphQLService.SendGraphQLQuery(copilotResponse);
         logger.LogInformation("Dab GraphQL Endpoint response: {graphQLResponse}", graphQLResponse);
+
+- Step 6: Invoke Copilot final response
 
         payload.Messages.Clear();
         payload.Messages.Add(new ChatMessage
@@ -76,13 +71,6 @@ app.MapPost(
                   Rewrite the GraphQL response '{graphQLResponse}' in a simple way and include also the query."
         });
 
-        //await context.Response.WriteTextStreamEvent(graphQLResponse);
-        //await context.Response.WriteEndStreamEvent();
-        //return;
-
         logger.LogInformation("Invoking Copilot...");
         var copilotFinalResponse = await copilotApiService.GetStreamCompletionsAsync(githubToken, payload);
         return Results.Stream(copilotFinalResponse, "application/json");
-    });
-
-app.Run();
