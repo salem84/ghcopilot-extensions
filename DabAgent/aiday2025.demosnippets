@@ -1,10 +1,33 @@
-﻿- Step 1: StreamEvent
+﻿- Prompt NoExt: Generico
+
+  Devo fare dei test, genera nome, cognome e codice fiscale di una persona
+
+- Prompt PeopleSkillset 1: Generico
+
+  Generami l'anagrafica di una persona
+
+- Prompt PeopleSkillset 2: Corretto con età
+  
+  Generami l'anagrafica di un uomo di 25 anni
+
+- Prompt PeopleSkillset 3: Errato con nome
+
+  mi generi l'anagrafica di una donna di nome simona
+
+- Prompt PeopleSkillset 4: Errato con anno di nascita
+
+  mi generi l'anagrafica di un ragazzo del 1990
+
+
+---------------------------------------------------------------------
+
+- DabAgent Step 1: StreamEvent
 
         await context.Response.WriteTextStreamEvent("Hello World!");
         await context.Response.WriteEndStreamEvent();
         return;
 
-- Step 2: System Prompt & Invoke Copilot
+- DabAgent Step 2: System Prompt & Invoke Copilot
 
         // Get the latest user message and modify it later to include a custom prompt        
         var lastMessageContent = payload.Messages.Last(x => x.Role == "user").Content;
@@ -39,10 +62,10 @@
         logger.LogInformation("Copilot response: {copilotResponse}", copilotResponse);
 
 
-- Step 3/1: Download Schema
+- DabAgent Step 3/1: Download Schema
         var schemaGraphQL = await graphQLService.GetGraphQLSchema(GRAPHQL_SCHEMA_PEOPLE_RELATIVE_URL);
 
-- Step 3/2: Insert GraphQL Schema prompt
+- DabAgent Step 3/2: Insert GraphQL Schema prompt
         
         // Insert GraphQL Schema prompt
         payload.Messages.Add(new ChatMessage
@@ -51,17 +74,17 @@
             Content = $"You must write a GraphQL query for a database with the following schema: {schemaGraphQL}"
         });
 
-- Step 4: Add model
+- DabAgent Step 4: Add model
 
         payload.Model = "gpt-4o";
 
-- Step 5: Send GraphQL query
+- DabAgent Step 5: Send GraphQL query
 
         logger.LogInformation("Invoking GraphQL Endpoint...");
         var graphQLResponse = await graphQLService.SendGraphQLQuery(copilotResponse);
         logger.LogInformation("Dab GraphQL Endpoint response: {graphQLResponse}", graphQLResponse);
 
-- Step 6: Invoke Copilot final response
+- DabAgent Step 6: Invoke Copilot final response
 
         payload.Messages.Clear();
         payload.Messages.Add(new ChatMessage
@@ -74,3 +97,11 @@
         logger.LogInformation("Invoking Copilot...");
         var copilotFinalResponse = await copilotApiService.GetStreamCompletionsAsync(githubToken, payload);
         return Results.Stream(copilotFinalResponse, "application/json");
+
+- DabAgent Prompt 1: Generico
+  
+  dammi il nome e cognome di una persona presente sul db
+
+- DabAgent Prompt 2: Città
+
+  mi dai l'anagrafica di una persona che vive a Catania
